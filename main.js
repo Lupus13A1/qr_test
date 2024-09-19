@@ -19,23 +19,32 @@ function closeQRCode(tableId) {
   alert(`QR Code สำหรับโต๊ะ ${tableId} ถูกปิดแล้ว`);
 }
 
+// ฟังก์ชันตรวจสอบสถานะ QR Code เมื่อสแกน
+function checkQRCodeStatus(tableId) {
+  if (!qrCodeStatus[tableId]) {
+    window.location.href = "https://qrtest01.netlify.app/404"; // เปลี่ยนไปหน้า 404
+  } else {
+    window.location.href = `https://qrtest01.netlify.app/menu?table=${tableId}`; // เปลี่ยนไปหน้าเมนูตามโต๊ะ
+  }
+}
+
 // เมื่อกดปุ่มแสดง QR Code ให้สร้าง QR Code สำหรับโต๊ะนั้นๆ
 document
   .getElementById("generate-table1")
   .addEventListener("click", function () {
-    generateQRCode("table1", "menu.html?table=1");
+    generateQRCode("table1", "https://qrtest01.netlify.app/menu?table=1");
   });
 
 document
   .getElementById("generate-table2")
   .addEventListener("click", function () {
-    generateQRCode("table2", "menu.html?table=2");
+    generateQRCode("table2", "https://qrtest01.netlify.app/menu?table=2");
   });
 
 document
   .getElementById("generate-table3")
   .addEventListener("click", function () {
-    generateQRCode("table3", "menu.html?table=3");
+    generateQRCode("table3", "https://qrtest01.netlify.app/menu?table=3");
   });
 
 // เพิ่มการทำงานให้กับปุ่มปิด QR Code
