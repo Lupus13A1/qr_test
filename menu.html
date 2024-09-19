@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu</title>
+</head>
+
+<body>
+    <h1>เมนูสำหรับโต๊ะ <span id="table-number"></span></h1>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const table = urlParams.get('table');
+
+        // สมมติว่าเราใช้ sessionStorage เพื่อเก็บสถานะการปิด QR Code
+        let qrCodeStatus = JSON.parse(sessionStorage.getItem('qrCodeStatus')) || {
+            table1: true,
+            table2: true,
+            table3: true
+        };
+
+        if (!qrCodeStatus[`table${table}`]) {
+            // ถ้า QR Code ถูกปิดแล้ว ให้ไปที่หน้า 404
+            window.location.href = '404.html';
+        } else {
+            document.getElementById('table-number').innerText = table;
+        }
+    </script>
+</body>
+
+</html>
