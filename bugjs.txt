@@ -1,0 +1,72 @@
+// เก็บสถานะการปิด QR Code และ token ที่สร้างแต่ละครั้ง
+let qrCodeData = {
+  table1: { status: true, token: "" },
+  table2: { status: true, token: "" },
+  table3: { status: true, token: "" },
+};
+
+// ฟังก์ชันสำหรับสร้าง token ที่ไม่ซ้ำกัน
+function generateUniqueToken() {
+  return Math.random().toString(36).substr(2, 9); // สร้าง token ที่ไม่ซ้ำกัน
+}
+
+// ฟังก์ชันสำหรับสร้าง QR Code โดยจะเพิ่มหมายเลขโต๊ะและ token ที่ไม่ซ้ำกันใน URL
+function generateQRCode(tableId) {
+  // เช็ค QR Code ก่อนการสร้าง
+  if (qrCodeData[tableId].status) {
+    let token = generateUniqueToken(); // สร้าง token ใหม่
+    qrCodeData[tableId].token = token; // เก็บ token ไว้
+    let url = `https://qrtest01.netlify.app/menu?table=${tableId}&token=${token}`;
+    new QRCode(document.getElementById(`qrcode-${tableId}`), url);
+    alert(`QR Code สำหรับ ${tableId} ถูกสร้างแล้ว: ${url}`);
+  } else {
+    alert(`QR Code สำหรับ ${tableId} ถูกปิดแล้ว`);
+  }
+}
+
+// ฟังก์ชันปิด QR Code
+function closeQRCode(tableId) {
+  qrCodeData[tableId].status = false; // เปลี่ยนสถานะเป็นปิด
+  document.getElementById(`qrcode-${tableId}`).innerHTML = ""; // ลบ QR Code ออกจากหน้าจอ
+  alert(`QR Code สำหรับ ${tableId} ถูกปิดแล้ว`);
+}
+
+// เช็ค QR Code และ token ก่อนเข้าสู่หน้าเมนู
+function checkQRCodeStatus(tableId, scannedToken) {
+  // เช็ค QR Code ถูกปิดหรือ token ไม่ตรงกัน
+  if (
+    !qrCodeData[tableId].status ||
+    qrCodeData[tableId].token !== scannedToken
+  ) {
+    window.location.href = "https://qrtest01.netlify.app/404"; // เปลี่ยนไปหน้า 404
+  } else {
+    window.location.href = `https://qrtest01.netlify.app/menu?table=${tableId}`; // เปลี่ยนตามโต๊ะ
+  }
+}
+
+// สร้าง qr สำหรับโต๊ะ
+document
+  .getElementById("generate-table1")
+  .addEventListener("click", function () {
+    generateQRCode("table1");
+  });
+
+document
+  .getElementById("generate-table2")
+  .addEventListener("click", function () {
+    generateQRCode("table2");
+  });
+
+document
+  .getElementById("generate-table3")
+  .addEventListener("click", function () {
+    generateQRCode("table3");
+  });
+
+// ปุ่มปิด QR Code
+document.querySelectorAll("button.closeQR").forEach(function (button) {
+  button.addEventListener("click", function () {
+    const tableId = this.getAttribute("data-table");
+    closeQRCode(tableId);
+  });
+});
